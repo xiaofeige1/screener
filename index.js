@@ -1,23 +1,17 @@
 import fetch from "node-fetch"
 import fs from "fs"
 
-// ======================
-// 参数区
-// ======================
 const BAR = "1H"
 const EMA_FAST = 24
 const EMA_SLOW = 48
 const MIN_KLINE = 300
-const TOP_N = 20
+const TOP_N = 50
 const MIN_VOL_USDT = 10_000_000
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const FROM_EMAIL = process.env.FROM_EMAIL
 const TO_EMAIL = process.env.TO_EMAIL
 
-// ======================
-// EMA
-// ======================
 function emaSeries(data, period) {
   const k = 2 / (period + 1)
   const arr = new Array(data.length)
@@ -28,9 +22,6 @@ function emaSeries(data, period) {
   return arr
 }
 
-// ======================
-// 单币种筛选
-// ======================
 async function checkSymbol(symbol) {
   try {
     const res = await fetch(
@@ -69,9 +60,6 @@ async function checkSymbol(symbol) {
   return null
 }
 
-// ======================
-// 发邮件
-// ======================
 async function sendEmail(results) {
   const text = results.length
     ? results.map(s => `• ${s}`).join("\n")
@@ -92,9 +80,6 @@ async function sendEmail(results) {
   })
 }
 
-// ======================
-// 主流程
-// ======================
 async function main() {
   const tickersRes = await fetch(
     "https://www.okx.com/api/v5/market/tickers?instType=SWAP"
@@ -118,7 +103,7 @@ async function main() {
     if (r) results.push(r)
   }
 
-  // ✅ 保存结果到文件
+  // ✅ 写文件（永远不会炸）
   fs.writeFileSync(
     "result.json",
     JSON.stringify(
