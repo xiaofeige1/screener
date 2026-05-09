@@ -1,2 +1,2 @@
 # screener
-scan okex
+test
