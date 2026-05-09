@@ -1,10 +1,10 @@
 {
-  "time": "2026-05-09T16:51:20.851Z",
+  "time": "2026-05-09T20:40:27.585Z",
   "count": 4,
   "symbols": [
+    "BTC-USDT-SWAP",
+    "ETH-USDT-SWAP",
     "PROS-USDT-SWAP",
-    "AXS-USDT-SWAP",
-    "BIO-USDT-SWAP",
     "BSB-USDT-SWAP"
   ]
 }
