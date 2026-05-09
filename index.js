@@ -74,7 +74,7 @@ async function sendEmail(results) {
     body: JSON.stringify({
       from: FROM_EMAIL,
       to: [TO_EMAIL],
-      subject: `EMA 筛选结果（${results.length}）`,
+      subject: `Github筛选结果: ${results.length}个`,
       text
     })
   })
