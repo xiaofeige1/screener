@@ -49,10 +49,12 @@ async function checkSymbol(symbol) {
 
     const price = opens.at(-1)
 
+    // ✅ 新增：open > EMA24
     if (
       fastEma.at(-1) > slowEma.at(-1) &&
       price > emaprice &&
-      price < lastemaprice
+      price < lastemaprice &&
+      price > fastEma.at(-1)   // ✅ open > EMA24
     ) {
       return symbol
     }
@@ -103,7 +105,6 @@ async function main() {
     if (r) results.push(r)
   }
 
-  // ✅ 写文件（永远不会炸）
   fs.writeFileSync(
     "result.json",
     JSON.stringify(
