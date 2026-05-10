@@ -4,8 +4,8 @@ import fs from "fs"
 const BAR = "1H"
 const EMA_FAST = 24
 const EMA_SLOW = 48
-const MIN_KLINE = 300
-const TOP_N = 50
+const MIN_KLINE = 500
+const TOP_N = 100
 const MIN_VOL_USDT = 10_000_000
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
