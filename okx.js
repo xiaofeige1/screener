@@ -2,8 +2,7 @@ import fetch from "node-fetch"
 import fs from "fs"
 
 const BAR = "1H"
-const EMA_FAST = 24
-const EMA_SLOW = 48
+const EMA_PERIOD = 24        // ✅ 只保留 EMA24
 const MIN_KLINE = 500
 const TOP_N = 100
 const MIN_VOL_USDT = 10_000_000
@@ -30,32 +29,47 @@ async function checkSymbol(symbol) {
     const kline = await res.json()
 
     const opens = kline.data?.map(d => parseFloat(d[1]))?.reverse()
-    if (!opens || opens.length < EMA_SLOW + 1) return null
+    const highs = kline.data?.map(d => parseFloat(d[2]))?.reverse()  // ✅ 新增：最高价
+    
+    if (!opens || !highs || opens.length < MIN_KLINE) return null
 
-    const fastEma = emaSeries(opens, EMA_FAST)
-    const slowEma = emaSeries(opens, EMA_SLOW)
+    const ema = emaSeries(opens, EMA_PERIOD)  // ✅ 只计算 EMA24
 
-    let emaprice = null
-    let lastemaprice = null
+    // ✅ 核心逻辑：连续 24 根最高价 > EMA24
+    let consecutiveAbove = 0
+    let originPoint1 = 0      // 上一次多头发力点
+    let originPoint = 0       // 本次多头发力点
 
-    for (let i = 1; i < fastEma.length; i++) {
-      if (fastEma[i] <= slowEma[i] && fastEma[i - 1] >= slowEma[i - 1]) {
-        lastemaprice = fastEma[i]
-      }
-      if (fastEma[i] >= slowEma[i] && fastEma[i - 1] < slowEma[i - 1]) {
-        emaprice = fastEma[i]
+    for (let i = 0; i < highs.length; i++) {
+      if (highs[i] > ema[i]) {
+        consecutiveAbove++
+        
+        // 当达到 24 根连续时，记录 24 根 K 线前的 EMA24 值
+        if (consecutiveAbove === 24) {
+          originPoint1 = originPoint
+          originPoint = ema[i - 23]  // ✅ 关键：24根前的EMA24（起源点）
+        }
+      } else {
+        consecutiveAbove = 0
       }
     }
 
-    const price = opens.at(-1)
+    // 如果从未达到过 24 根连续，跳过
+    if (originPoint === 0) return null
 
-    // ✅ 新增：open > EMA24
-    if (
-      fastEma.at(-1) > slowEma.at(-1) &&
-      price > emaprice &&
-      price < lastemaprice &&
-      price > fastEma.at(-1)   // ✅ open > EMA24
-    ) {
+    const maxOrigin = Math.max(originPoint, originPoint1)
+    const minOrigin = Math.min(originPoint, originPoint1)
+
+    const lastIndex = opens.length - 1
+    const lastLow = parseFloat(kline.data[lastIndex][3])  // ✅ 最新K线最低价
+    const lastHigh = highs[lastIndex]                    // ✅ 最新K线最高价
+
+    // ✅ 检查观察区域条件
+    const observe =
+      (lastLow < maxOrigin && lastLow > minOrigin) ||
+      (lastHigh > minOrigin && lastHigh < maxOrigin)
+
+    if (observe) {
       return symbol
     }
   } catch {}
