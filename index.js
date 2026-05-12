@@ -2,11 +2,10 @@ import fetch from "node-fetch"
 import fs from "fs"
 
 const BAR = "1H"
-const EMA_FAST = 24
-const EMA_SLOW = 48
-const MIN_KLINE = 500
+const EMA_PERIOD = 24
+const MIN_KLINE = 400
 const TOP_N = 100
-const MIN_VOL_USDT = 10_000_000
+const MIN_VOL_USDT = 50_000_000
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const FROM_EMAIL = process.env.FROM_EMAIL
@@ -30,35 +29,55 @@ async function checkSymbol(symbol) {
     const kline = await res.json()
 
     const opens = kline.data?.map(d => parseFloat(d[1]))?.reverse()
-    if (!opens || opens.length < EMA_SLOW + 1) return null
+    const highs = kline.data?.map(d => parseFloat(d[2]))?.reverse()
+    
+    if (!opens || !highs || opens.length < MIN_KLINE) return null
 
-    const fastEma = emaSeries(opens, EMA_FAST)
-    const slowEma = emaSeries(opens, EMA_SLOW)
+    const ema = emaSeries(opens, EMA_PERIOD)
 
-    let emaprice = null
-    let lastemaprice = null
+    // ✅ 计算连续最高价高于 EMA24 的 K 线数
+    let consecutiveAbove = 0
+    let originPoint1 = 0      // 上一次多头发力点
+    let originPoint = 0       // 本次多头发力点
 
-    for (let i = 1; i < fastEma.length; i++) {
-      if (fastEma[i] <= slowEma[i] && fastEma[i - 1] >= slowEma[i - 1]) {
-        lastemaprice = fastEma[i]
-      }
-      if (fastEma[i] >= slowEma[i] && fastEma[i - 1] < slowEma[i - 1]) {
-        emaprice = fastEma[i]
+    // 遍历所有 K 线
+    for (let i = 0; i < highs.length; i++) {
+      if (highs[i] > ema[i]) {
+        consecutiveAbove++
+        
+        // 当达到 24 根连续时，记录 24 根 K 线前的 EMA24 值
+        if (consecutiveAbove === 24) {
+          originPoint1 = originPoint
+          originPoint = ema[i - 23]  // ✅ 关键：24根前的EMA24（起源点）
+        }
+      } else {
+        consecutiveAbove = 0
       }
     }
 
-    const price = opens.at(-1)
+    // 如果从未达到过 24 根连续，跳过
+    if (originPoint === 0) return null
 
-    // ✅ 新增：open > EMA24
-    if (
-      fastEma.at(-1) > slowEma.at(-1) &&
-      price > emaprice &&
-      price < lastemaprice &&
-      price > fastEma.at(-1)   // ✅ open > EMA24
-    ) {
+    const maxOrigin = Math.max(originPoint, originPoint1)
+    const minOrigin = Math.min(originPoint, originPoint1)
+
+    // ✅ 检查观察区域条件（使用最新 K 线）
+    const lastIndex = opens.length - 1
+    const lastLow = kline.data[lastIndex] ? parseFloat(kline.data[lastIndex][3]) : null
+    const lastHigh = highs[lastIndex]
+
+    if (!lastLow || !lastHigh) return null
+
+    const observe =
+      (lastLow < maxOrigin && lastLow > minOrigin) ||
+      (lastHigh > minOrigin && lastHigh < maxOrigin)
+
+    if (observe) {
       return symbol
     }
-  } catch {}
+  } catch (e) {
+    console.error(`Error checking ${symbol}:`, e.message)
+  }
   return null
 }
 
@@ -83,6 +102,8 @@ async function sendEmail(results) {
 }
 
 async function main() {
+  console.log("1/3: 获取 OKX 成交额排行...")
+
   const tickersRes = await fetch(
     "https://www.okx.com/api/v5/market/tickers?instType=SWAP"
   )
@@ -98,11 +119,17 @@ async function main() {
     .sort((a, b) => b.volUsdt - a.volUsdt)
     .slice(0, TOP_N)
 
+  console.log(`2/3: 候选币种: ${top.length}`)
+  console.log("3/3: 符合条件币种:\n")
+
   const results = []
 
   for (const t of top) {
     const r = await checkSymbol(t.symbol)
-    if (r) results.push(r)
+    if (r) {
+      results.push(r)
+      console.log(r)
+    }
   }
 
   fs.writeFileSync(
