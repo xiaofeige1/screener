@@ -1,30 +1,40 @@
-name: Binance Screener
+name: EMA Screener
 
 on:
   schedule:
     - cron: "0 */4 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write   # ✅ 关键
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # ✅ 只改了这一行：从 v4 改成 v5
-      - name: Set up Node.js
-        uses: actions/setup-node@v5
+      - uses: actions/checkout@v4
         with:
-          node-version: "20"   # 这里依然可以是 20，v5 支持 20
+          persist-credentials: true   # ✅ 保留 token
 
-      - name: Install dependencies
-        run: npm install node-fetch
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - name: Run screening script
+      - run: npm install
+
+      - run: node index.js
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
           TO_EMAIL: ${{ secrets.TO_EMAIL }}
-        run: node binance.js  # 确保这里的文件名和你的 JS 文件名一致
+
+      - name: Commit result
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add result.json
+          git commit -m "Update screener result" || echo "No changes"
+          git push
