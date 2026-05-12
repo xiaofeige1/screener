@@ -1,18 +1,17 @@
 import fetch from "node-fetch"
 import fs from "fs"
 
-// ======================
-// 参数区
-// ======================
-const BAR = "1h"
-const EMA_PERIOD = 24
-const MIN_KLINE = 300
+const BAR = "1H"
+const EMA_FAST = 24
+const EMA_SLOW = 48
+const MIN_KLINE = 500
 const TOP_N = 100
-const MIN_VOL_USDT = 50_000_000
+const MIN_VOL_USDT = 10_000_000
 
-// ======================
-// EMA 计算
-// ======================
+const RESEND_API_KEY = process.env.RESEND_API_KEY
+const FROM_EMAIL = process.env.FROM_EMAIL
+const TO_EMAIL = process.env.TO_EMAIL
+
 function emaSeries(data, period) {
   const k = 2 / (period + 1)
   const arr = new Array(data.length)
@@ -23,142 +22,89 @@ function emaSeries(data, period) {
   return arr
 }
 
-// ======================
-// 单个币种筛选
-// ======================
 async function checkSymbol(symbol) {
   try {
     const res = await fetch(
-      `https://fapi.binance.com/fapi/v1/klines?symbol=${symbol}&interval=${BAR}&limit=${MIN_KLINE}`
+      `https://www.okx.com/api/v5/market/candles?instId=${symbol}&bar=${BAR}&limit=${MIN_KLINE}`
     )
     const kline = await res.json()
 
-    const opens = kline.map(d => parseFloat(d[1]))
-    const highs = kline.map(d => parseFloat(d[2]))
-    const lows = kline.map(d => parseFloat(d[3]))
-    
-    if (opens.length < MIN_KLINE) return null
+    const opens = kline.data?.map(d => parseFloat(d[1]))?.reverse()
+    if (!opens || opens.length < EMA_SLOW + 1) return null
 
-    const ema = emaSeries(opens, EMA_PERIOD)
+    const fastEma = emaSeries(opens, EMA_FAST)
+    const slowEma = emaSeries(opens, EMA_SLOW)
 
-    // ✅ 计算连续最高价高于 EMA24 的 K 线数
-    let consecutiveAbove = 0
-    let originPoint1 = 0
-    let originPoint = 0
+    let emaprice = null
+    let lastemaprice = null
 
-    for (let i = 0; i < opens.length; i++) {
-      if (highs[i] > ema[i]) {
-        consecutiveAbove++
-        
-        if (consecutiveAbove === 24) {
-          originPoint1 = originPoint
-          originPoint = ema[i - 23]
-        }
-      } else {
-        consecutiveAbove = 0
+    for (let i = 1; i < fastEma.length; i++) {
+      if (fastEma[i] <= slowEma[i] && fastEma[i - 1] >= slowEma[i - 1]) {
+        lastemaprice = fastEma[i]
+      }
+      if (fastEma[i] >= slowEma[i] && fastEma[i - 1] < slowEma[i - 1]) {
+        emaprice = fastEma[i]
       }
     }
 
-    if (originPoint === 0) return null
+    const price = opens.at(-1)
 
-    const maxOrigin = Math.max(originPoint, originPoint1)
-    const minOrigin = Math.min(originPoint, originPoint1)
-
-    const lastIndex = opens.length - 1
-    const lastLow = lows[lastIndex]
-    const lastHigh = highs[lastIndex]
-
-    const observe =
-      (lastLow < maxOrigin && lastLow > minOrigin) ||
-      (lastHigh > minOrigin && lastHigh < maxOrigin)
-
-    if (observe) {
-      return {
-        symbol,
-        price: opens[lastIndex],
-        ema24: ema[lastIndex].toFixed(2),
-        originHigh: maxOrigin.toFixed(2),
-        originLow: minOrigin.toFixed(2)
-      }
+    // ✅ 新增：open > EMA24
+    if (
+      fastEma.at(-1) > slowEma.at(-1) &&
+      price > emaprice &&
+      price < lastemaprice &&
+      price > fastEma.at(-1)   // ✅ open > EMA24
+    ) {
+      return symbol
     }
-  } catch (e) {
-    console.error(`${symbol}: ${e.message}`)
-  }
+  } catch {}
   return null
 }
 
-// ======================
-// 发送邮件（Resend）
-// ======================
 async function sendEmail(results) {
-  const apiKey = process.env.RESEND_API_KEY
-  const fromEmail = process.env.FROM_EMAIL
-  const toEmail = process.env.TO_EMAIL
-
-  if (!apiKey || !fromEmail || !toEmail) {
-    console.log("缺少邮件配置，跳过发送")
-    return
-  }
-
   const text = results.length
-    ? results.map(r => `• ${r.symbol} ($${r.price})`).join("\n")
+    ? results.map(s => `• ${s}`).join("\n")
     : "本次筛选无符合条件的币种"
 
-  try {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        from: fromEmail,
-        to: [toEmail],
-        subject: `币安筛选结果：${results.length}个币种`,
-        text
-      })
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from: FROM_EMAIL,
+      to: [TO_EMAIL],
+      subject: `Github筛选结果: ${results.length}个`,
+      text
     })
-    console.log("邮件发送成功")
-  } catch (e) {
-    console.error("邮件发送失败:", e.message)
-  }
+  })
 }
 
-// ======================
-// 主逻辑
-// ======================
 async function main() {
-  console.log("1/3: 获取 Binance 成交额排行...")
-
   const tickersRes = await fetch(
-    "https://fapi.binance.com/fapi/v1/ticker/24hr"
+    "https://www.okx.com/api/v5/market/tickers?instType=SWAP"
   )
   const tickers = await tickersRes.json()
 
-  const top = tickers
-    .filter(t => t.symbol.endsWith("USDT"))
+  const top = tickers.data
+    .filter(t => t.instId.endsWith("USDT-SWAP"))
     .map(t => ({
-      symbol: t.symbol,
-      volUsdt: parseFloat(t.quoteVolume)
+      symbol: t.instId,
+      volUsdt: parseFloat(t.last) * parseFloat(t.vol24h)
     }))
     .filter(t => t.volUsdt > MIN_VOL_USDT)
     .sort((a, b) => b.volUsdt - a.volUsdt)
     .slice(0, TOP_N)
 
-  console.log(`2/3: 候选币种: ${top.length}`)
-  console.log("3/3: 开始筛选...\n")
-
   const results = []
 
   for (const t of top) {
     const r = await checkSymbol(t.symbol)
-    if (r) {
-      results.push(r)
-      console.log(`${r.symbol} $${r.price}`)
-    }
+    if (r) results.push(r)
   }
 
-  // 保存结果到文件
   fs.writeFileSync(
     "result.json",
     JSON.stringify(
@@ -172,12 +118,8 @@ async function main() {
     )
   )
 
-  // 发送邮件
   await sendEmail(results)
-
-  console.log("==============================")
-  console.log(`最终结果: ${results.length}个`)
-  console.log("==============================")
+  console.log("Done:", results.length)
 }
 
 main()
