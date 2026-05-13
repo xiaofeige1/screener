@@ -1,6 +1,6 @@
 {
-  "time": "2026-05-13T06:45:25.750Z",
-  "count": 11,
+  "time": "2026-05-13T10:22:09.718Z",
+  "count": 9,
   "symbols": [
     "ZEC-USDT-SWAP",
     "YFI-USDT-SWAP",
@@ -9,9 +9,7 @@
     "FIL-USDT-SWAP",
     "AAVE-USDT-SWAP",
     "TON-USDT-SWAP",
-    "RIVER-USDT-SWAP",
     "SNDK-USDT-SWAP",
-    "AR-USDT-SWAP",
-    "LINK-USDT-SWAP"
+    "AR-USDT-SWAP"
   ]
 }
