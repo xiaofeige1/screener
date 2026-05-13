@@ -1,19 +1,5 @@
 {
-  "time": "2026-05-13T04:16:32.133Z",
-  "count": 13,
-  "symbols": [
-    "BTC-USDT-SWAP",
-    "ZEC-USDT-SWAP",
-    "YFI-USDT-SWAP",
-    "TAO-USDT-SWAP",
-    "ICP-USDT-SWAP",
-    "FIL-USDT-SWAP",
-    "AAVE-USDT-SWAP",
-    "TON-USDT-SWAP",
-    "RIVER-USDT-SWAP",
-    "SNDK-USDT-SWAP",
-    "AR-USDT-SWAP",
-    "BERA-USDT-SWAP",
-    "LINK-USDT-SWAP"
-  ]
+  "time": "2026-05-13T04:20:47.243Z",
+  "count": 0,
+  "symbols": []
 }
