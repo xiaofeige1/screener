@@ -6,7 +6,7 @@ const EMA_FAST = 24
 const EMA_SLOW = 72  // ✅ 从48改为72
 const MIN_KLINE = 500
 const TOP_N = 100
-const MIN_VOL_USDT = 10_000_000  // ✅ 从40,000,000改为10,000,000
+const MIN_VOL_USDT = 40_000_000  // ✅ 从40,000,000改为10,000,000
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const FROM_EMAIL = process.env.FROM_EMAIL
