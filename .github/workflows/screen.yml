@@ -25,7 +25,7 @@ jobs:
 
       - run: npm install
 
-      - run: node okx.js
+      - run: node okx_old.js
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
