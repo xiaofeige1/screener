@@ -51,8 +51,8 @@ async function sendEmail(results) {
   }
 
   const text = results.length
-    ? results.map(r => `• ${r.symbol} ($${r.price})`).join("\n")
-    : "本次筛选无符合条件的币种"
+    ? results.map(r => `• ${r.symbol}`).join("\n")
+    : "本次筛选无符合条件的品种"
 
   try {
     await fetch("https://api.resend.com/emails", {
@@ -64,7 +64,7 @@ async function sendEmail(results) {
       body: JSON.stringify({
         from: FROM_EMAIL,
         to: [TO_EMAIL],
-        subject: `Github筛选结果: ${results.length}个币种`,
+        subject: `Git筛选结果: ${results.length}`,
         text
       })
     })
