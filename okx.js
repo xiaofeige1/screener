@@ -3,10 +3,10 @@ import fs from "fs"
 
 const BAR = "1H"
 const EMA_FAST = 24
-const EMA_SLOW = 72  // ✅ 从48改为72
+const EMA_SLOW = 72
 const MIN_KLINE = 500
 const TOP_N = 100
-const MIN_VOL_USDT = 40_000_000  // ✅ 从40,000,000改为10,000,000
+const MIN_VOL_USDT = 40_000_000
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const FROM_EMAIL = process.env.FROM_EMAIL
@@ -55,14 +55,12 @@ async function checkSymbol(symbol) {
     const minEma = Math.min(emaprice, lastemaprice)
     const maxEma = Math.max(emaprice, lastemaprice)
 
-    // ✅ 你的新逻辑：4根K线中任意一根在区间内
     const isPriceInRange = 
       (price > minEma && price < maxEma) ||
       (price1 > minEma && price1 < maxEma) ||
       (price2 > minEma && price2 < maxEma) ||
       (price3 > minEma && price3 < maxEma)
 
-    // ✅ 价格高于区间中点
     const isPriceAboveMid = price > (emaprice + lastemaprice) / 2
 
     if (isPriceInRange && isPriceAboveMid) {
@@ -75,9 +73,15 @@ async function checkSymbol(symbol) {
 }
 
 async function sendEmail(results) {
-  const text = results.length
+  // ✅ 仅计算北京时间，不做任何多余加工
+  const serverTime = new Date()
+  const beijingTime = new Date(serverTime.getTime() + 8 * 60 * 60 * 1000)
+  const timeStr = beijingTime.toISOString().replace('T', ' ').substring(0, 19)
+
+  // ✅ 保持你原来的格式，只加时间前缀
+  const text = `${timeStr}\n\n` + (results.length
     ? results.map(s => `• ${s}`).join("\n")
-    : "本次筛选无符合条件的品种"
+    : "本次筛选无符合条件的品种")
 
   await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -88,7 +92,7 @@ async function sendEmail(results) {
     body: JSON.stringify({
       from: FROM_EMAIL,
       to: [TO_EMAIL],
-      subject: `Git筛选结果: ${results.length}`,
+      subject: `Git筛选结果: ${results.length}`, // 保持你原来的主题
       text
     })
   })
