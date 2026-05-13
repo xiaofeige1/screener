@@ -1,5 +1,97 @@
 {
-  "time": "2026-05-13T02:45:47.814Z",
-  "count": 0,
-  "symbols": []
+  "time": "2026-05-13T04:01:18.096Z",
+  "count": 13,
+  "symbols": [
+    {
+      "symbol": "BTC-USDT-SWAP",
+      "price": 81212,
+      "emaprice": 80315.30393989298,
+      "lastemaprice": 80930.98932039984,
+      "ema24": 80805.58160489211
+    },
+    {
+      "symbol": "ZEC-USDT-SWAP",
+      "price": 584.74,
+      "emaprice": null,
+      "lastemaprice": 583.0030293565767,
+      "ema24": 564.1658544931825
+    },
+    {
+      "symbol": "YFI-USDT-SWAP",
+      "price": 2784,
+      "emaprice": 2715.8065616614067,
+      "lastemaprice": 2778.963560346268,
+      "ema24": 2769.4352343779324
+    },
+    {
+      "symbol": "TAO-USDT-SWAP",
+      "price": 312.6,
+      "emaprice": null,
+      "lastemaprice": 315.74612491711883,
+      "ema24": 312.4019073651143
+    },
+    {
+      "symbol": "ICP-USDT-SWAP",
+      "price": 3.226,
+      "emaprice": 2.358770268056579,
+      "lastemaprice": 3.372168521049068,
+      "ema24": 3.2314055544742124
+    },
+    {
+      "symbol": "FIL-USDT-SWAP",
+      "price": 1.1071,
+      "emaprice": 0.9225510650775709,
+      "lastemaprice": 1.1658983566852432,
+      "ema24": 1.1022009741322465
+    },
+    {
+      "symbol": "AAVE-USDT-SWAP",
+      "price": 98.61,
+      "emaprice": 93.23986513418276,
+      "lastemaprice": 98.29924978421975,
+      "ema24": 97.72386650228749
+    },
+    {
+      "symbol": "TON-USDT-SWAP",
+      "price": 2.301,
+      "emaprice": 1.3150064000000001,
+      "lastemaprice": 2.454122516127459,
+      "ema24": 2.336699001086994
+    },
+    {
+      "symbol": "RIVER-USDT-SWAP",
+      "price": 6.292,
+      "emaprice": 6.106167755385581,
+      "lastemaprice": 6.358980981083987,
+      "ema24": 6.223494589235449
+    },
+    {
+      "symbol": "SNDK-USDT-SWAP",
+      "price": 1485.6,
+      "emaprice": 1352.2027297139846,
+      "lastemaprice": 1535.5585329303378,
+      "ema24": 1469.7401255489115
+    },
+    {
+      "symbol": "AR-USDT-SWAP",
+      "price": 2.405,
+      "emaprice": null,
+      "lastemaprice": 2.496622122212926,
+      "ema24": 2.3478497374265204
+    },
+    {
+      "symbol": "BERA-USDT-SWAP",
+      "price": 0.4075,
+      "emaprice": 0.3677525039707297,
+      "lastemaprice": 0.40072870551421264,
+      "ema24": 0.4002248149391769
+    },
+    {
+      "symbol": "LINK-USDT-SWAP",
+      "price": 10.466,
+      "emaprice": 9.124913813309073,
+      "lastemaprice": 10.435382026962577,
+      "ema24": 10.355017632653109
+    }
+  ]
 }
