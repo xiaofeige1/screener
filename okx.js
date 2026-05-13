@@ -1,16 +1,26 @@
 import fetch from "node-fetch"
 import fs from "fs"
 
+// ======================
+// 参数区
+// ======================
 const BAR = "1H"
-const EMA_PERIOD = 24        // ✅ 只保留 EMA24
+const EMA_FAST = 24
+const EMA_SLOW = 72
 const MIN_KLINE = 500
 const TOP_N = 100
-const MIN_VOL_USDT = 10_000_000
+const MIN_VOL_USDT = 40_000_000
 
+// ======================
+// 环境变量（从 GitHub Secrets 读取）
+// ======================
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const FROM_EMAIL = process.env.FROM_EMAIL
 const TO_EMAIL = process.env.TO_EMAIL
 
+// ======================
+// EMA 序列
+// ======================
 function emaSeries(data, period) {
   const k = 2 / (period + 1)
   const arr = new Array(data.length)
@@ -21,88 +31,60 @@ function emaSeries(data, period) {
   return arr
 }
 
-async function checkSymbol(symbol) {
-  try {
-    const res = await fetch(
-      `https://www.okx.com/api/v5/market/candles?instId=${symbol}&bar=${BAR}&limit=${MIN_KLINE}`
-    )
-    const kline = await res.json()
-
-    const opens = kline.data?.map(d => parseFloat(d[1]))?.reverse()
-    const highs = kline.data?.map(d => parseFloat(d[2]))?.reverse()  // ✅ 新增：最高价
-    
-    if (!opens || !highs || opens.length < MIN_KLINE) return null
-
-    const ema = emaSeries(opens, EMA_PERIOD)  // ✅ 只计算 EMA24
-
-    // ✅ 核心逻辑：连续 24 根最高价 > EMA24
-    let consecutiveAbove = 0
-    let originPoint1 = 0      // 上一次多头发力点
-    let originPoint = 0       // 本次多头发力点
-
-    for (let i = 0; i < highs.length; i++) {
-      if (highs[i] > ema[i]) {
-        consecutiveAbove++
-        
-        // 当达到 24 根连续时，记录 24 根 K 线前的 EMA24 值
-        if (consecutiveAbove === 24) {
-          originPoint1 = originPoint
-          originPoint = ema[i - 23]  // ✅ 关键：24根前的EMA24（起源点）
-        }
-      } else {
-        consecutiveAbove = 0
-      }
-    }
-
-    // 如果从未达到过 24 根连续，跳过
-    if (originPoint === 0) return null
-
-    const maxOrigin = Math.max(originPoint, originPoint1)
-    const minOrigin = Math.min(originPoint, originPoint1)
-
-    const lastIndex = opens.length - 1
-    const lastLow = parseFloat(kline.data[lastIndex][3])  // ✅ 最新K线最低价
-    const lastHigh = highs[lastIndex]                    // ✅ 最新K线最高价
-
-    // ✅ 检查观察区域条件
-    const observe =
-      (lastLow < maxOrigin && lastLow > minOrigin) ||
-      (lastHigh > minOrigin && lastHigh < maxOrigin)
-
-    if (observe) {
-      return symbol
-    }
-  } catch {}
-  return null
+// ======================
+// HTTP 请求
+// ======================
+async function fetchJson(url) {
+  const res = await fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0" }
+  })
+  return res.json()
 }
 
+// ======================
+// 发送邮件（Resend）
+// ======================
 async function sendEmail(results) {
+  if (!RESEND_API_KEY || !FROM_EMAIL || !TO_EMAIL) {
+    console.log("缺少邮件配置，跳过发送")
+    return
+  }
+
   const text = results.length
-    ? results.map(s => `• ${s}`).join("\n")
+    ? results.map(r => `• ${r.symbol} ($${r.price})`).join("\n")
     : "本次筛选无符合条件的币种"
 
-  await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      from: FROM_EMAIL,
-      to: [TO_EMAIL],
-      subject: `Github筛选结果: ${results.length}个`,
-      text
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: FROM_EMAIL,
+        to: [TO_EMAIL],
+        subject: `Github筛选结果: ${results.length}个币种`,
+        text
+      })
     })
-  })
+    console.log("邮件发送成功")
+  } catch (e) {
+    console.error("邮件发送失败:", e.message)
+  }
 }
 
+// ======================
+// 主逻辑
+// ======================
 async function main() {
-  const tickersRes = await fetch(
+  console.log("1/3: 获取永续合约成交额排行...")
+
+  const tickersRes = await fetchJson(
     "https://www.okx.com/api/v5/market/tickers?instType=SWAP"
   )
-  const tickers = await tickersRes.json()
 
-  const top = tickers.data
+  const top = tickersRes.data
     .filter(t => t.instId.endsWith("USDT-SWAP"))
     .map(t => ({
       symbol: t.instId,
@@ -112,13 +94,69 @@ async function main() {
     .sort((a, b) => b.volUsdt - a.volUsdt)
     .slice(0, TOP_N)
 
+  console.log(`2/3: 成交额大于${MIN_VOL_USDT / 10000}万U币种数量: ${top.length}`)
+  console.log(`3/3: 符合条件币种:\n`)
+
   const results = []
 
   for (const t of top) {
-    const r = await checkSymbol(t.symbol)
-    if (r) results.push(r)
+    try {
+      const kline = await fetchJson(
+        `https://www.okx.com/api/v5/market/candles?instId=${t.symbol}&bar=${BAR}&limit=${MIN_KLINE}`
+      )
+
+      const opens = kline.data
+        ?.map(d => parseFloat(d[1]))
+        ?.reverse()
+
+      if (!opens || opens.length < EMA_SLOW + 1) continue
+
+      const fastEma = emaSeries(opens, EMA_FAST)
+      const slowEma = emaSeries(opens, EMA_SLOW)
+
+      let emaprice = null
+      let lastemaprice = null
+
+      for (let i = 1; i < fastEma.length; i++) {
+        if (fastEma[i] <= slowEma[i] && fastEma[i - 1] >= slowEma[i - 1]) {
+          lastemaprice = fastEma[i]
+        }
+        if (fastEma[i] >= slowEma[i] && fastEma[i - 1] < slowEma[i - 1]) {
+          emaprice = fastEma[i]
+        }
+      }
+
+      const price = opens.at(-1)
+      const price1 = opens.at(-2)
+      const price2 = opens.at(-3)
+      const price3 = opens.at(-4)
+
+      const minEma = Math.min(emaprice, lastemaprice)
+      const maxEma = Math.max(emaprice, lastemaprice)
+
+      // ✅ 核心逻辑：4根K线中任意一根在区间内
+      const isPriceInRange = 
+        (price > minEma && price < maxEma) ||
+        (price1 > minEma && price1 < maxEma) ||
+        (price2 > minEma && price2 < maxEma) ||
+        (price3 > minEma && price3 < maxEma)
+
+      const isPriceAboveMid = price > (emaprice + lastemaprice) / 2
+
+      if (isPriceInRange && isPriceAboveMid) {
+        results.push({
+          symbol: t.symbol,
+          price,
+          emaprice,
+          lastemaprice,
+          ema24: fastEma.at(-1)
+        })
+        console.log(`${t.symbol}`)
+      }
+    } catch (_) {}
   }
 
+  // 保存结果到文件
   fs.writeFileSync(
     "result.json",
     JSON.stringify(
@@ -132,8 +170,12 @@ async function main() {
     )
   )
 
+  // 发送邮件
   await sendEmail(results)
-  console.log("Done:", results.length)
+
+  console.log("==============================")
+  console.log(`3/3: 符合条件币种数量: ${results.length}`)
+  console.log("==============================")
 }
 
 main()
