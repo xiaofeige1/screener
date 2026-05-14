@@ -1,16 +1,14 @@
 {
-  "time": "2026-05-14T06:43:53.105Z",
-  "count": 10,
+  "time": "2026-05-14T10:11:54.916Z",
+  "count": 8,
   "symbols": [
     "ZEC-USDT-SWAP",
-    "TAO-USDT-SWAP",
     "BZ-USDT-SWAP",
+    "TAO-USDT-SWAP",
     "ICP-USDT-SWAP",
     "SOL-USDT-SWAP",
-    "XPD-USDT-SWAP",
     "AAVE-USDT-SWAP",
     "SUI-USDT-SWAP",
-    "TON-USDT-SWAP",
-    "AR-USDT-SWAP"
+    "TON-USDT-SWAP"
   ]
 }
