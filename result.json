@@ -1,8 +1,11 @@
 {
-  "time": "2026-05-16T02:36:11.111Z",
-  "count": 5,
+  "time": "2026-05-16T06:19:32.350Z",
+  "count": 8,
   "symbols": [
     "ZEC-USDT-SWAP",
+    "BNB-USDT-SWAP",
+    "HYPE-USDT-SWAP",
+    "ICP-USDT-SWAP",
     "FIL-USDT-SWAP",
     "INJ-USDT-SWAP",
     "LAB-USDT-SWAP",
