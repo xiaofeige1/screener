@@ -1,12 +1,10 @@
 {
-  "time": "2026-05-15T20:57:02.001Z",
-  "count": 7,
+  "time": "2026-05-16T02:36:11.111Z",
+  "count": 5,
   "symbols": [
     "ZEC-USDT-SWAP",
-    "SOL-USDT-SWAP",
     "FIL-USDT-SWAP",
     "INJ-USDT-SWAP",
-    "SUI-USDT-SWAP",
     "LAB-USDT-SWAP",
     "TON-USDT-SWAP"
   ]
