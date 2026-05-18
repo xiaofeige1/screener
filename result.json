@@ -1,10 +1,12 @@
 {
-  "time": "2026-05-18T15:22:16.174Z",
-  "count": 4,
+  "time": "2026-05-18T17:57:14.437Z",
+  "count": 6,
   "symbols": [
-    "XAG-USDT-SWAP",
-    "DASH-USDT-SWAP",
+    "TAO-USDT-SWAP",
+    "SOL-USDT-SWAP",
     "INJ-USDT-SWAP",
-    "TON-USDT-SWAP"
+    "TON-USDT-SWAP",
+    "AXS-USDT-SWAP",
+    "SPACEX-USDT-SWAP"
   ]
 }
