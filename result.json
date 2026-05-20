@@ -1,16 +1,16 @@
 {
-  "time": "2026-05-20T14:55:12.438Z",
+  "time": "2026-05-20T18:13:35.297Z",
   "count": 10,
   "symbols": [
-    "ZEC-USDT-SWAP",
-    "XAG-USDT-SWAP",
+    "ETH-USDT-SWAP",
     "DASH-USDT-SWAP",
-    "BZ-USDT-SWAP",
+    "BNB-USDT-SWAP",
     "TAO-USDT-SWAP",
+    "OKB-USDT-SWAP",
     "SOL-USDT-SWAP",
-    "INJ-USDT-SWAP",
-    "ORDI-USDT-SWAP",
+    "BERA-USDT-SWAP",
     "SUI-USDT-SWAP",
-    "INTC-USDT-SWAP"
+    "SNDK-USDT-SWAP",
+    "APE-USDT-SWAP"
   ]
 }
