@@ -1,23 +1,26 @@
 {
-  "time": "2026-05-21T16:55:04.565Z",
-  "count": 17,
+  "time": "2026-05-21T17:54:26.601Z",
+  "count": 20,
   "symbols": [
     "ZEC-USDT-SWAP",
+    "XAG-USDT-SWAP",
     "HYPE-USDT-SWAP",
     "DASH-USDT-SWAP",
-    "EDEN-USDT-SWAP",
+    "FIL-USDT-SWAP",
+    "GIGGLE-USDT-SWAP",
     "INJ-USDT-SWAP",
-    "LIT-USDT-SWAP",
+    "EDEN-USDT-SWAP",
     "SUI-USDT-SWAP",
+    "LIT-USDT-SWAP",
     "PROVE-USDT-SWAP",
-    "BSB-USDT-SWAP",
     "BERA-USDT-SWAP",
+    "BSB-USDT-SWAP",
     "TON-USDT-SWAP",
-    "ZEN-USDT-SWAP",
     "JTO-USDT-SWAP",
     "WLD-USDT-SWAP",
-    "ASTER-USDT-SWAP",
     "MU-USDT-SWAP",
+    "ZEN-USDT-SWAP",
+    "ASTER-USDT-SWAP",
     "SNDK-USDT-SWAP"
   ]
 }
