@@ -1,12 +1,11 @@
 {
-  "time": "2026-05-21T02:55:16.999Z",
-  "count": 6,
+  "time": "2026-05-21T07:45:48.974Z",
+  "count": 5,
   "symbols": [
-    "ETH-USDT-SWAP",
     "DASH-USDT-SWAP",
-    "OKB-USDT-SWAP",
+    "ICP-USDT-SWAP",
+    "INJ-USDT-SWAP",
     "BERA-USDT-SWAP",
-    "ZEN-USDT-SWAP",
-    "SNDK-USDT-SWAP"
+    "ZEN-USDT-SWAP"
   ]
 }
