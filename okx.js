@@ -4,7 +4,7 @@ import fs from "fs"
 const BAR = "1H"
 const EMA_FAST = 24
 const EMA_SLOW = 72
-const MIN_KLINE = 500
+const MIN_KLINE = 400
 const TOP_N = 100
 const MIN_VOL_USDT = 40_000_000
 
@@ -79,7 +79,7 @@ async function sendEmail(results) {
   const timeStr = beijingTime.toISOString().replace('T', ' ').substring(0, 19)
 
   // ✅ 保持你原来的格式，只加时间前缀
-  const text = `${timeStr}\n\n` + (results.length
+  const text = `${timeStr}\n\n筛选条件:EMA24&EMA72两次交叉之间\n` + (results.length
     ? results.map(s => `• ${s}`).join("\n")
     : "本次筛选无符合条件的品种")
 
