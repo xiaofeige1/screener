@@ -1,21 +1,19 @@
 {
-  "time": "2026-05-22T02:55:30.247Z",
-  "count": 15,
+  "time": "2026-05-22T07:41:04.349Z",
+  "count": 13,
   "symbols": [
     "HYPE-USDT-SWAP",
-    "DASH-USDT-SWAP",
     "ICP-USDT-SWAP",
     "FIL-USDT-SWAP",
-    "GIGGLE-USDT-SWAP",
     "INJ-USDT-SWAP",
     "EDEN-USDT-SWAP",
-    "PROVE-USDT-SWAP",
+    "SUI-USDT-SWAP",
     "LIT-USDT-SWAP",
-    "BERA-USDT-SWAP",
     "LPT-USDT-SWAP",
+    "BERA-USDT-SWAP",
     "WLD-USDT-SWAP",
     "SNDK-USDT-SWAP",
-    "TON-USDT-SWAP",
-    "MU-USDT-SWAP"
+    "GRASS-USDT-SWAP",
+    "ASTER-USDT-SWAP"
   ]
 }
