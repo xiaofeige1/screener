@@ -5,9 +5,9 @@ const BAR = "1H"
 const DAILY_BAR = "1D"
 const EMA_FAST = 24
 const EMA_SLOW = 72
-const MIN_KLINE = 300
+const MIN_KLINE = 200
 const TOP_N = 100
-const MIN_VOL_USDT = 50_000_000
+const MIN_VOL_USDT = 30_000_000
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const FROM_EMAIL = process.env.FROM_EMAIL
