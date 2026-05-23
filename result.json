@@ -1,12 +1,10 @@
 {
-  "time": "2026-05-23T13:17:14.592Z",
-  "count": 6,
+  "time": "2026-05-23T16:56:17.257Z",
+  "count": 4,
   "symbols": [
-    "BZ-USDT-SWAP",
-    "RIVER-USDT-SWAP",
+    "INJ-USDT-SWAP",
     "BSB-USDT-SWAP",
     "GMT-USDT-SWAP",
-    "BEAT-USDT-SWAP",
-    "GRASS-USDT-SWAP"
+    "BEAT-USDT-SWAP"
   ]
 }
