@@ -88,7 +88,7 @@ async function checkSymbol(symbol) {
     const currentPrice = closes.at(-1)
     const condition3 = currentPrice > lastSaturdayOpen
     
-    if (condition1 && condition2 && condition3) {
+    if (condition1 && condition3) {
       return symbol  // ✅ 直接返回 symbol 字符串，不要返回对象
     }
   } catch (e) {
@@ -108,12 +108,11 @@ async function sendEmail(symbols) {
 
   // 构建邮件内容 - 简洁明了
   let text = `${timeStr}\n\n筛选条件:\n`
-  text += `1. 当前K线最高价 > EMA24 & EMA72\n`
-  text += `2. 前一根K线最高价 > EMA24 & EMA72\n`
-  text += `3. 当前价格 > 上周六0点开盘价\n\n`
+  text += `1. 当前价格 > EMA24 & EMA72\n`
+  text += `2. 当前价格 > 上周六开盘价\n\n`
   
   if (symbols.length > 0) {
-    text += `符合条件的币种 (${symbols.length}个):\n`
+    text += `${symbols.length}个符合条件的币种:\n`
     symbols.forEach((symbol, i) => {
       text += `${symbol}\n`  // ✅ 直接显示 symbol，没有多余信息
     })
@@ -130,7 +129,7 @@ async function sendEmail(symbols) {
     body: JSON.stringify({
       from: FROM_EMAIL,
       to: [TO_EMAIL],
-      subject: `Git筛选结果: ${symbols.length}个币种符合条件`,
+      subject: `Git筛选结果: ${symbols.length}`,
       text
     })
   })
