@@ -1,16 +1,15 @@
 {
-  "time": "2026-05-24T16:57:27.540Z",
-  "count": 10,
+  "time": "2026-05-24T20:51:23.797Z",
+  "count": 9,
   "symbols": [
     "ZEC-USDT-SWAP",
     "HYPE-USDT-SWAP",
     "DASH-USDT-SWAP",
     "XPT-USDT-SWAP",
     "XPD-USDT-SWAP",
-    "WLD-USDT-SWAP",
     "GRASS-USDT-SWAP",
     "LIT-USDT-SWAP",
-    "LPT-USDT-SWAP",
-    "ASTER-USDT-SWAP"
+    "ASTER-USDT-SWAP",
+    "GMT-USDT-SWAP"
   ]
 }
