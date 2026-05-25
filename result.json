@@ -1,24 +1,19 @@
 {
-  "time": "2026-05-25T17:40:17.436Z",
-  "count": 18,
+  "time": "2026-05-25T21:02:42.996Z",
+  "count": 13,
   "symbols": [
     "BTC-USDT-SWAP",
     "XAU-USDT-SWAP",
-    "ZEC-USDT-SWAP",
-    "ETH-USDT-SWAP",
     "XAG-USDT-SWAP",
-    "BNB-USDT-SWAP",
     "YFI-USDT-SWAP",
-    "DASH-USDT-SWAP",
     "ICP-USDT-SWAP",
-    "XPT-USDT-SWAP",
     "XPD-USDT-SWAP",
+    "XPT-USDT-SWAP",
     "INJ-USDT-SWAP",
-    "TRUMP-USDT-SWAP",
     "TON-USDT-SWAP",
     "WLD-USDT-SWAP",
-    "LPT-USDT-SWAP",
     "GRASS-USDT-SWAP",
-    "ZEN-USDT-SWAP"
+    "LPT-USDT-SWAP",
+    "LIT-USDT-SWAP"
   ]
 }
