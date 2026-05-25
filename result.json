@@ -1,5 +1,5 @@
 {
-  "time": "2026-05-25T14:47:45.818Z",
+  "time": "2026-05-25T17:40:17.436Z",
   "count": 18,
   "symbols": [
     "BTC-USDT-SWAP",
@@ -7,18 +7,18 @@
     "ZEC-USDT-SWAP",
     "ETH-USDT-SWAP",
     "XAG-USDT-SWAP",
-    "HYPE-USDT-SWAP",
     "BNB-USDT-SWAP",
     "YFI-USDT-SWAP",
     "DASH-USDT-SWAP",
     "ICP-USDT-SWAP",
-    "XPD-USDT-SWAP",
     "XPT-USDT-SWAP",
+    "XPD-USDT-SWAP",
     "INJ-USDT-SWAP",
+    "TRUMP-USDT-SWAP",
+    "TON-USDT-SWAP",
     "WLD-USDT-SWAP",
-    "BSB-USDT-SWAP",
     "LPT-USDT-SWAP",
-    "ZEN-USDT-SWAP",
-    "LIT-USDT-SWAP"
+    "GRASS-USDT-SWAP",
+    "ZEN-USDT-SWAP"
   ]
 }
