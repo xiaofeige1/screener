@@ -1,19 +1,11 @@
 {
-  "time": "2026-05-25T21:02:42.996Z",
-  "count": 13,
+  "time": "2026-05-26T02:48:43.074Z",
+  "count": 5,
   "symbols": [
-    "BTC-USDT-SWAP",
-    "XAU-USDT-SWAP",
-    "XAG-USDT-SWAP",
-    "YFI-USDT-SWAP",
-    "ICP-USDT-SWAP",
-    "XPD-USDT-SWAP",
-    "XPT-USDT-SWAP",
     "INJ-USDT-SWAP",
-    "TON-USDT-SWAP",
     "WLD-USDT-SWAP",
     "GRASS-USDT-SWAP",
     "LPT-USDT-SWAP",
-    "LIT-USDT-SWAP"
+    "NEAR-USDT-SWAP"
   ]
 }
