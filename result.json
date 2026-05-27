@@ -1,17 +1,13 @@
 {
-  "time": "2026-05-26T21:41:09.136Z",
-  "count": 11,
+  "time": "2026-05-27T03:25:24.502Z",
+  "count": 7,
   "symbols": [
-    "OKB-USDT-SWAP",
     "XAG-USDT-SWAP",
-    "WLD-USDT-SWAP",
-    "XPT-USDT-SWAP",
+    "ICP-USDT-SWAP",
     "XPD-USDT-SWAP",
-    "INJ-USDT-SWAP",
     "MU-USDT-SWAP",
     "RIVER-USDT-SWAP",
     "SNDK-USDT-SWAP",
-    "RENDER-USDT-SWAP",
-    "TIA-USDT-SWAP"
+    "RENDER-USDT-SWAP"
   ]
 }
