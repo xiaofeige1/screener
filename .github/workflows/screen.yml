@@ -2,7 +2,7 @@ name: EMA Screener
 
 on:
   schedule:
-    - cron: "0 */4 * * *"
+    - cron: "18 0,4,8,12 * * *"
   workflow_dispatch:
 
 permissions:
